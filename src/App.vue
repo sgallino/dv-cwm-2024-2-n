@@ -10,12 +10,7 @@ const feedback = ref({
     title: null,
 });
 
-// Definimos un proveedor de dependencias para la data de la notificación.
-// Para lograrlo, usamos la función del core de Vue: provide.
-// Esta función recibe 2 valores:
-// 1. La "key" que identifica a la dependencia.
-// 2. El valor. Típicamente, suele ser un objeto.
-provide(dependencyGlobalFeedbackKey, {
+const notificationService = {
     // En este caso, estamos pasando como dato del objeto la referencia en
     // sí. Esto significa que cualquiera de los descendientes de este 
     // componente puede modificar impunemente el valor.
@@ -43,7 +38,14 @@ provide(dependencyGlobalFeedbackKey, {
             message: null,
         });
     },
-});
+};
+
+// Definimos un proveedor de dependencias para la data de la notificación.
+// Para lograrlo, usamos la función del core de Vue: provide.
+// Esta función recibe 2 valores:
+// 1. La "key" que identifica a la dependencia.
+// 2. El valor. Típicamente, suele ser un objeto.
+provide(dependencyGlobalFeedbackKey, notificationService);
 </script>
 
 <template>
@@ -51,9 +53,15 @@ provide(dependencyGlobalFeedbackKey, {
     <main class="container p-4 mx-auto">
         <div 
             v-if="feedback.message"
-            class="p-4 mb-4 bg-green-200 rounded"
+            class="relative p-4 mb-4 bg-green-200 rounded"
         >
             {{ feedback.message }}
+
+            <button 
+                type="button"
+                class="absolute top-0 right-0 w-12 h-12"
+                @click="() => notificationService.clearGlobalFeedback()"
+            >&times;</button>
         </div>
         <router-view />
     </main>
